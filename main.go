@@ -85,6 +85,9 @@ func main() {
 			// Wait for connection established
 			<-iceConnectedCtx.Done()
 
+			ticker := time.NewTicker(20 * time.Millisecond)
+			//done := make(chan bool)
+
 			for {
 				// Opus encoding looping
 				// Opus frame size must be: 2.5, 5, 10, 20, 40 or 60 ms long
@@ -120,12 +123,15 @@ func main() {
 
 				sample := media.Sample{Data: data, Duration: sampleDuration}
 
+				//wait for ticker...
+				<-ticker.C
+
 				err = audioTrack.WriteSample(sample)
 				if err != nil {
 					log.Printf("audioTrack.WriteSample error: %v", err)
 					panic(err)
 				}
-				time.Sleep(sampleDuration)
+				//time.Sleep(sampleDuration)
 			}
 		}()
 	}
